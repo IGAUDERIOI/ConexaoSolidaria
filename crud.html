@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="crud.css"/>
+  <title>Área Restrita</title>
+</head>
+<body>
+
+  <h1>Bem-vindo, Administrador!</h1>
+  <h2>Clique no botão abaixo para ver as opções disponiveis.</h2>
+  <button id="openModalBtn">Opções</button>
+  <a id="backBtn" href="../ConexaoSolidaria/final.html" >
+  Voltar para a Tela Principal</a>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+        <a href="../ong/ong.html">
+      <button>ONGs</button>
+      </a>
+
+      <a href="../projeto/projetos.html">
+      <button>PROJETOS</button>
+      </a>
+
+      <a href="../colaboracao/colab.html">
+      <button>COLABORADORES</button>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const openModalBtn = document.getElementById('openModalBtn');
+    const overlay = document.getElementById('overlay');
+
+    openModalBtn.addEventListener('click', () => {
+      overlay.style.display = 'flex';
+    });
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.style.display = 'none';
+      }
+    });
+  </script>
+
+</body>
+</html>

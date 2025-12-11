@@ -1,0 +1,133 @@
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de ONGs</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@latest"></script>
+    <script src="supabase.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2>
+            <span>Gerenciamento de ONGs</span>
+            <button class="btn btn-add" id="btn-add-ong">
+                <i class="fas fa-plus"></i> Nova ONG
+            </button>
+        </h2>
+        
+        <div class="botoes-container">
+            <a class="btn btn-voltar" href="../tela-crud/crud.html">
+                <i class="fas fa-arrow-left"></i> Voltar para Área Restrita
+            </a>
+            <a class="btn" href="../projeto/projetos.html">
+                <i class="fas fa-project-diagram"></i> PROJETOS
+            </a>
+            <a class="btn" href="../colaboracao/colab.html">
+                <i class="fas fa-users"></i> COLABORADORES
+            </a>
+        </div>
+
+        <!-- Tabela de ONGs -->
+        <div id="tabela-container">
+            <table id="table-ongs">
+                <thead>
+                    <tr>
+                        <th width="120">Ações</th>
+                        <th width="80">ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th width="150">Categoria</th>
+                        <th>Telefone</th>
+                        <th>CNPJ</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Dados carregados via JavaScript -->
+                </tbody>
+            </table>
+            
+            <!-- Estado vazio -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <h3>Nenhuma ONG cadastrada</h3>
+                <p>Clique no botão "Nova ONG" para adicionar sua primeira organização.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar/Editar ONG -->
+    <div id="ong-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Adicionar Nova ONG</h3>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="form-ong">
+                    <input type="hidden" id="input-id">
+                    
+                    <div class="form-group">
+                        <label for="input-nome">Nome da ONG *</label>
+                        <input type="text" id="input-nome" class="form-control" placeholder="Digite o nome da ONG" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-descricao">Descrição</label>
+                        <textarea id="input-descricao" class="form-control" placeholder="Descreva a missão e atividades da ONG"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-categoria">Categoria *</label>
+                        <select id="input-categoria" class="form-control" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Educação">Educação</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Meio Ambiente">Meio Ambiente</option>
+                            <option value="Direitos Humanos">Direitos Humanos</option>
+                            <option value="Assistência Social">Assistência Social</option>
+                            <option value="Cultura">Cultura</option>
+                            <option value="Inclusão Social">Inclusão Social</option>
+                            <option value="Proteção Animal">Proteção Animal</option>
+                            <option value="Tecnologia">Tecnologia</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-telefone">Telefone</label>
+                        <input type="text" id="input-telefone" class="form-control" placeholder="(XX) XXXXX-XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-cnpj">CNPJ</label>
+                        <input type="text" id="input-cnpj" class="form-control" placeholder="XX.XXX.XXX/0001-XX">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
+                <button class="btn btn-primary" id="btn-salvar">Salvar ONG</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação para exclusão -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header" style="background-color: #dc2626;">
+                <h3>Confirmar Exclusão</h3>
+                <button class="close-modal" id="close-confirm-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">Tem certeza que deseja excluir esta ONG? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancelar-exclusao">Cancelar</button>
+                <button class="btn delete-btn" id="btn-confirmar-exclusao">Excluir</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

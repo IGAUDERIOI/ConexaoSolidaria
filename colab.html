@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Colaborações</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@latest"></script>
+    <script src="colab.js" defer></script>
+    <script src="colab-modal.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <!-- TÍTULO COM BOTÃO NO LADO DIREITO -->
+        <h2>
+            <span>Gerenciamento de Colaborações</span>
+            <button class="btn btn-add" id="btn-add-colaboracao">
+                <i class="fas fa-plus"></i> Nova Colaboração
+            </button>
+        </h2>
+
+        <!-- BOTÕES DE NAVEGAÇÃO ABAIXO -->
+        <div class="botoes-container">
+            <a class="btn btn-voltar" href="../tela-crud/crud.html">
+                <i class="fas fa-arrow-left"></i> Voltar para Área Restrita
+            </a>
+            <a class="btn" href="../ong/ong.html">
+                <i class="fas fa-hands-helping"></i> ONGs
+            </a>
+            <a class="btn" href="../projeto/projetos.html">
+                <i class="fas fa-project-diagram"></i> PROJETOS
+            </a>
+        </div>
+
+        <!-- Tabela de Colaborações -->
+        <div id="tabela-container">
+            <table id="table-colaboracao">
+                <thead>
+                    <tr>
+                        <th width="140">Ações</th>
+                        <th width="60">ID</th>
+                        <th>Nome</th>
+                        <th width="180">Email</th>
+                        <th width="120">Telefone</th>
+                        <th width="180">Mensagem</th>
+                        <th width="110">Data Envio</th>
+                        <th width="100">Projeto ID</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Dados carregados via JavaScript -->
+                </tbody>
+            </table>
+            
+            <!-- Estado vazio -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-hands-helping"></i>
+                <h3>Nenhuma colaboração registrada</h3>
+                <p>Clique no botão "Nova Colaboração" para adicionar sua primeira colaboração.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar/Editar Colaboração -->
+    <div id="colaboracao-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Nova Colaboração</h3>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="form-colaboracao">
+                    <input type="hidden" id="input-id">
+                    
+                    <div class="form-group">
+                        <label for="input-nome">Nome *</label>
+                        <input type="text" id="input-nome" class="form-control" placeholder="Digite o nome do colaborador" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-email">Email *</label>
+                        <input type="email" id="input-email" class="form-control" placeholder="exemplo@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-telefone">Telefone</label>
+                        <input type="text" id="input-telefone" class="form-control" placeholder="(11) 99999-9999">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-mensagem">Mensagem *</label>
+                        <textarea id="input-mensagem" class="form-control" placeholder="Descreva como deseja colaborar..." rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-dt_envio">Data de Envio *</label>
+                        <input type="date" id="input-dt_envio" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-projeto_id">Projeto Relacionado *</label>
+                        <select id="input-projeto_id" class="form-control" required>
+                            <option value="">Selecione um projeto</option>
+                            <!-- Os projetos serão carregados dinamicamente aqui -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
+                <button class="btn btn-success" id="btn-salvar">Salvar Colaboração</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação para exclusão -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header" style="background-color: #dc2626;">
+                <h3>Confirmar Exclusão</h3>
+                <button class="close-modal" id="close-confirm-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">Tem certeza que deseja excluir esta colaboração? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancelar-exclusao">Cancelar</button>
+                <button class="btn delete-btn" id="btn-confirmar-exclusao">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para visualizar mensagem completa -->
+    <div id="mensagem-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Mensagem Completa</h3>
+                <button class="close-modal" id="close-mensagem-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="mensagem-info">
+                    <p><strong>De:</strong> <span id="mensagem-nome"></span></p>
+                    <p><strong>Email:</strong> <span id="mensagem-email"></span></p>
+                    <p><strong>Data:</strong> <span id="mensagem-data"></span></p>
+                </div>
+                <hr>
+                <div class="mensagem-conteudo">
+                    <p id="mensagem-texto"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-fechar-mensagem">Fechar</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Projetos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@latest"></script>
+    <script src="projeto.js" defer></script>
+    <script src="projeto-modal.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <!-- TÍTULO COM BOTÃO NO LADO DIREITO -->
+        <h2>
+            <span>Gerenciamento de Projetos</span>
+            <button class="btn btn-add" id="btn-add-projeto">
+                <i class="fas fa-plus"></i> Novo Projeto
+            </button>
+        </h2>
+        
+        <!-- BOTÕES DE NAVEGAÇÃO ABAIXO -->
+        <div class="botoes-container">
+            <a class="btn btn-secondary" href="../tela-crud/crud.html">
+                <i class="fas fa-arrow-left"></i> Voltar para Área Restrita
+            </a>
+            <a class="btn" href="../ong/ong.html">
+                <i class="fas fa-hands-helping"></i> ONGs
+            </a>
+            <a class="btn" href="../colaboracao/colab.html">
+                <i class="fas fa-users"></i> COLABORADORES
+            </a>
+        </div>
+
+        <!-- Tabela de Projetos -->
+        <div id="tabela-container">
+            <table id="table-projeto">
+                <thead>
+                    <tr>
+                        <th width="120">Ações</th>
+                        <th width="80">ID</th>
+                        <th>Projeto</th>
+                        <th>Descrição</th>
+                        <th width="150">Categoria</th>
+                        <th width="120">ONG</th>
+                        <th width="120">Colaborações</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Dados carregados via JavaScript -->
+                </tbody>
+            </table>
+            
+            <!-- Estado vazio -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-project-diagram"></i>
+                <h3>Nenhum projeto cadastrado</h3>
+                <p>Clique no botão "Novo Projeto" para adicionar seu primeiro projeto.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar/Editar Projeto -->
+    <div id="projeto-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Adicionar Novo Projeto</h3>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="form-projeto">
+                    <input type="hidden" id="input-id">
+                    
+                    <div class="form-group">
+                        <label for="input-nome">Nome do Projeto *</label>
+                        <input type="text" id="input-nome" class="form-control" placeholder="Digite o nome do projeto" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-descricao">Descrição *</label>
+                        <textarea id="input-descricao" class="form-control" placeholder="Descreva o objetivo e atividades do projeto" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-categoria">Categoria *</label>
+                        <select id="input-categoria" class="form-control" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Educação">Educação</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Meio Ambiente">Meio Ambiente</option>
+                            <option value="Direitos Humanos">Direitos Humanos</option>
+                            <option value="Assistência Social">Assistência Social</option>
+                            <option value="Cultura">Cultura</option>
+                            <option value="Inclusão Social">Inclusão Social</option>
+                            <option value="Proteção Animal">Proteção Animal</option>
+                            <option value="Tecnologia">Tecnologia</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-ONG_id">ONG Responsável *</label>
+                        <select id="input-ONG_id" class="form-control" required>
+                            <option value="">Selecione uma ONG</option>
+                            <!-- As ONGs serão carregadas dinamicamente aqui -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Imagem do Projeto</label>
+                        <div class="file-upload-container" id="file-upload-container">
+                            <label class="file-upload-label" for="input-imagem">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Clique para selecionar uma imagem ou arraste e solte</p>
+                                <p><small>Formatos suportados: JPG, PNG, GIF (Max: 5MB)</small></p>
+                            </label>
+                            <input type="file" id="input-imagem" class="file-input" accept="image/*">
+                            <div id="file-name" class="file-name"></div>
+                        </div>
+                        
+                        <div class="image-preview-container" id="image-preview-container">
+                            <!-- Preview da imagem será exibido aqui -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
+                <button class="btn btn-success" id="btn-salvar">Salvar Projeto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação para exclusão -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header" style="background-color: #dc2626;">
+                <h3>Confirmar Exclusão</h3>
+                <button class="close-modal" id="close-confirm-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">Tem certeza que deseja excluir este projeto? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancelar-exclusao">Cancelar</button>
+                <button class="btn delete-btn" id="btn-confirmar-exclusao">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para visualizar imagem -->
+    <div id="image-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px; background: transparent; box-shadow: none;">
+            <div class="modal-header" style="background: rgba(0,0,0,0.7); justify-content: flex-end;">
+                <button class="close-modal" id="close-image-modal" style="background: rgba(255,255,255,0.2); border-radius: 50%;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 0; text-align: center; background: transparent;">
+                <img id="modal-image" src="" alt="Imagem do projeto" style="max-width: 100%; max-height: 70vh; border-radius: 8px;">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

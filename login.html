@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script> 
+
+    <title>Tela de Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            background-color: #ccc;
+        }
+
+        .login-box {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            width: 320px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            border: 1px solid #1f8f55;
+            background-color: #1f8f55;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            border: 1px solid #1f8f55;
+            background-color: #1f8f55;
+        }
+        .botoes{
+            border: 1px solid #1f8f55;
+            background-color: #1f8f55;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-box">
+        <a href="../ConexaoSolidaria/final.html">
+            <button class="botoes" style="margin-bottom: 15px;">
+                Voltar para a Página Principal
+            </button>
+        </a>
+        <h2>Login</h2>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Digite seu email" />
+
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" placeholder="Digite sua senha" />
+
+        <button class="botoes" onclick="login()">Entrar</button>
+    </div>
+    <script>
+        const supabase = window.supabase.createClient(
+            "https://bablaekfvhnrivhwqbos.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYmxhZWtmdmhucml2aHdxYm9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MzE0NjgsImV4cCI6MjA4MDMwNzQ2OH0.pQRlJ-ZTm6jjyODrS_SNJDUgiHGCwFY4A9cWFCjK14E"
+        );
+
+        async function login() {
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
+
+            if (!email || !senha) {
+                alert("Preencha todos os campos!");
+                return;
+            }
+
+            // 2 — Tenta fazer login diretamente pelo Supabase Auth
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: senha,
+            });
+
+            if (error) {
+                alert("Login inválido: " + error.message);
+                return;
+            }
+
+            window.location.href = "../tela-crud/crud.html";
+            
+        }
+    </script>
+</body>
+
+</html>
